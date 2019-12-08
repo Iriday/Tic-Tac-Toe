@@ -2,9 +2,9 @@ package tictactoe;
 
 import java.util.Scanner;
 
-public class Main {
+public class TicTacToe {
 
-    enum GameState {
+    public enum GameState {
         GAME_NOT_FINISHED("Game not finished"), DRAW("Draw"), X_WINS("X wins"), O_WINS("O wins"), IMPOSSIBLE("Impossible");
         String info;
 
@@ -14,17 +14,22 @@ public class Main {
     }
 
     //represents game field
-    private static final char[][] gameFieldData = new char[3][3];
-    private static final Scanner scn = new Scanner(System.in);
-    private static GameState gameState;
-    private static char player = 'O';
+    private final char[][] gameFieldData = new char[3][3];
+    private final Scanner scn = new Scanner(System.in);
+    private GameState gameState;
+    private char player = 'O';
 
     public static void main(String[] args) {
 
-        // set initial field state from terminal
+        TicTacToe game = new TicTacToe();
+        game.play();
+
+    }
+
+    private void play() {
         //setInitialFieldStateFromInput();
 
-        //starts the game again if user types "Yes" after the end of the game
+        //starts the game again if user types "Yes" after the end of the game //game loop
         do {
             // reset/initialize game state
             gameState = GameState.GAME_NOT_FINISHED;
@@ -33,29 +38,28 @@ public class Main {
             initializeArrayWithEmptyCells();
 
             // print empty field
-            printField(gameFieldData);
+            printField();
 
-            //game loop
             while (gameState == GameState.GAME_NOT_FINISHED) {
 
                 // read input and make next move
-                readInputAndMakeNextMove(gameFieldData);// int[] coordinates =
+                readInputAndMakeNextMove();
 
                 // check game state
-                gameState = checkGameState(gameFieldData);
+                gameState = checkGameState();
 
                 // print field data
-                printField(gameFieldData);
+                printField();
             }
 
             //the end of the game, print outcome
             System.out.println(gameState.info);
 
             System.out.println("Do you want to play again? type Yes or No");
-        } while (scn.next().equalsIgnoreCase("Yes"));//, Locale.ENGLISH
+        } while (scn.next().equalsIgnoreCase("Yes"));
     }
 
-    private static void initializeArrayWithEmptyCells() {
+    private void initializeArrayWithEmptyCells() {
         char emptyCell = ' ';
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
@@ -64,9 +68,9 @@ public class Main {
         }
     }
 
-    private static void readInputAndMakeNextMove(char[][] gameFieldData) {
-        int x = 0;
-        int y = 0;
+    private void readInputAndMakeNextMove() {
+        int x;
+        int y;
         player = player == 'O' ? 'X' : 'O';
 
         while (true) {
@@ -80,7 +84,6 @@ public class Main {
             }
             if (x < 1 || x > 3 || y < 1 || y > 3) {
                 System.out.println("Coordinates should be from 1 to 3!");
-                continue;
             } else {
                 // convert coordinates to array indexes
                 int column = x - 1;
@@ -91,14 +94,12 @@ public class Main {
                     break;
                 } else {
                     System.out.println("This cell is occupied! Choose another one!");
-                    continue;
                 }
             }
         }
     }
 
-
-    private static void printField(char[][] gameFieldData) {
+    private void printField() {
         String s1 = " ";
         String s2 = "|";
 
@@ -113,7 +114,7 @@ public class Main {
         System.out.println("---------");
     }
 
-    private static GameState checkGameState(char[][] gameFieldData) {
+    private GameState checkGameState() {
         int x = 0;
         int o = 0;
 
@@ -124,9 +125,7 @@ public class Main {
                     x++;
                 } else if (val == 'O') {
                     o++;
-                } else if (val == ' ' || val == '_' || val == '-') {
-                    continue;
-                } else {
+                } else if (!(val == ' ' || val == '_' || val == '-')) {
                     return GameState.IMPOSSIBLE;
                 }
             }
@@ -145,7 +144,7 @@ public class Main {
         } else if (oPlayer) {
             return GameState.O_WINS;
         }
-        // check draw or game not finished
+        // check if draw or not finished
         if (drawOrNotFinished()) {
             return GameState.DRAW;
         } else {
@@ -153,7 +152,7 @@ public class Main {
         }
     }
 
-    private static boolean checkWinner(char player) {
+    private boolean checkWinner(char player) {
 
         //check rows
         for (char[] row : gameFieldData) {
@@ -168,18 +167,13 @@ public class Main {
             }
         }
         // check diagonals
-        if (gameFieldData[0][0] == player && gameFieldData[1][1] == player && gameFieldData[2][2] == player || gameFieldData[0][2] == player && gameFieldData[1][1] == player && gameFieldData[2][0] == player) {
-            return true;
-        }
-        return false;
+        return gameFieldData[0][0] == player && gameFieldData[1][1] == player && gameFieldData[2][2] == player || gameFieldData[0][2] == player && gameFieldData[1][1] == player && gameFieldData[2][0] == player;
     }
 
-    private static boolean drawOrNotFinished() {
+    private boolean drawOrNotFinished() {
         for (char[] row : gameFieldData) {
             for (char val : row) {
-                if (val == 'X' || val == 'O') {
-                    continue;
-                } else {
+                if (!(val == 'X' || val == 'O')) {
                     return false;
                 }
             }
@@ -210,5 +204,4 @@ public class Main {
         gameFieldData[0] = input.substring(0, 3).toCharArray();
         gameFieldData[1] = input.substring(3, 6).toCharArray();
         gameFieldData[2] = input.substring(6, 9).toCharArray();
-
     }*/
